@@ -3,6 +3,8 @@ from rest_framework.response import Response
 import requests
 import logging
 import re
+from whatsapp_sms import settings
+
 
 
 # git add . & git commit -m "Debugging" & git push origin main
@@ -11,7 +13,9 @@ import re
 # Title Mapping
 TITLE_MAPPING = {1: "Monsieur", 2: "Madame"}
 
-SMS_API_URL = "https://api.avlytext.com/v1/sms?api_key=H8krDAYH8deiNpKgSKqFlRjbY3Gx9N09ESfujWfcxrp0Sw6Msftk6XZ0OfSA0xQe67k5"
+SMS_API_URL = settings.sms_api_url
+
+WHATSAPP_API_URL = "https://app.techsoft-sms.com/api/v3/sms/send"
 
 
 # Car Model Mapping (update this based on your Odoo system)
@@ -54,8 +58,25 @@ def receive_webhook(request):
         # Assume phone number is retrieved elsewhere (e.g., another API call)
         phone_number = str(data.get("phone", 0)).replace(" ","")
         phone_number = format_cameroon_number(phone_number)
-        if phone_number=="0":
 
+        whatsapp_number = str(data.get("mobile", 0)).replace(" ","")
+        whatsapp_number = format_cameroon_number(whatsapp_number)
+
+        # Headers
+        headers = {
+            "Authorization": f"Bearer {settings.techsoft}",
+            "Content-Type": "application/json"
+        }
+
+        # Data payload
+        data = {
+            "recipient": "237655272036",
+            "sender_id": "237657467945",
+            "type": "whatsapp",
+            "message": "This is a test message"
+        }
+
+        if phone_number=="0" and whatsapp_number=="0" :
             return Response({"status": "failed", "message": "No Phone Number"}, status=200)
         # Send SMS asynchronously
         # send_sms_task.delay(phone_number, message_content)
@@ -68,22 +89,23 @@ def receive_webhook(request):
         "recipient": phone_number,
         "text": message_content
         }
+
+        whatsapp_payload =   {  
+        "recipient": whatsapp_number,
+        "sender_id": "237657467945",
+        "type": "whatsapp",
+        "message": message_content
+        }
         # logging.error(f"Received Webhook Data: {sms_payload}")
         
         try:
-            response = requests.post(SMS_API_URL, json=sms_payload)
-            # return response.json()  # Return API response (useful for logging) 
-            # Check if the SMS was sent successfully
-            if response.status_code == 200:
-                logging.error(f"Success to send SMS")
-                return Response({"status": "success", "message": "SMS sent successfully"}, status=200)
-                
-
-            else:
-                logging.error(f"Failed to send SMS")
-                return Response({"status": "error", "message": "Failed to send SMS"}, status=500)
+            send_SMS(sms_payload)
+            send_Whatsapp(whatsapp_payload, headers)
         except Exception as e:
+            logging.error(e)
             return Response({"error": str(e)}, status=500)
+        
+        return Response({"status": "success", "message": "SMS Sent"}, status=200)
 
 
         # return Response({"status": "success", "message": "SMS task queued"})
@@ -102,3 +124,28 @@ def format_cameroon_number(phone):
     if re.fullmatch(r"6\d{8}", phone):
         return "+237" + phone
     return phone  # Return as is if it doesn't match
+
+
+def send_SMS(payload):
+    """
+    Converts a 9-digit phone number starting with '6' into the international format (+237).
+    """
+    response = requests.post(SMS_API_URL, json=payload)
+    # return response.json()  # Return API response (useful for logging) 
+    # Check if the SMS was sent successfully
+    if response.status_code == 200: 
+        return True
+    else: 
+        return False
+    
+def send_Whatsapp( payload, headers):
+    """
+    Converts a 9-digit phone number starting with '6' into the international format (+237).
+    """
+
+    response = requests.post(WHATSAPP_API_URL, headers=headers, json=payload) 
+
+    if response.status_code == 200: 
+        return True
+    else: 
+        return False

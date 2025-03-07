@@ -3,5 +3,4 @@ djangorestframework
 gunicorn
 whitenoise
 requests
-celery
-redis 
+python-dotenv
