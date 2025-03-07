@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from .tasks import send_sms_task
 import requests
 import logging
-
+import re
 
 
 # git add . & git commit -m "Debugging" & git push origin main
@@ -53,8 +53,9 @@ def receive_webhook(request):
 
         
         # Assume phone number is retrieved elsewhere (e.g., another API call)
-        phone_number = data.get("phone", 0)
-        if phone_number==0:
+        phone_number = str(data.get("phone", 0)).replace(" ","")
+        phone_number = format_cameroon_number(phone_number)
+        if phone_number=="0":
 
             return Response({"status": "failed", "message": "No Phone Number"}, status=200)
         # Send SMS asynchronously
@@ -92,3 +93,13 @@ def receive_webhook(request):
         print(e)
         logging.error(e)
         return Response({"error": str(e)}, status=500)
+
+
+def format_cameroon_number(phone):
+    """
+    Converts a 9-digit phone number starting with '6' into the international format (+237).
+    """
+    # Check if the phone number is exactly 9 digits and starts with 6
+    if re.fullmatch(r"6\d{8}", phone):
+        return "+237" + phone
+    return phone  # Return as is if it doesn't match
