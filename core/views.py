@@ -5,6 +5,10 @@ import requests
 import logging
 
 
+
+# git add . & git commit -m "Debugging" & git push origin main
+
+
 # Title Mapping
 TITLE_MAPPING = {1: "Monsieur", 2: "Madame"}
 
@@ -21,6 +25,7 @@ CAR_MODEL_MAPPING = {
 @api_view(["POST"])
 def receive_webhook(request):
     logging.error(f"Received Webhook Data: {request.data}")
+    logging.info(f"Received Webhook Header: {request.headers}")
     """
     Receives webhook data from Odoo and triggers an async SMS sending task.
     """
@@ -71,7 +76,7 @@ def receive_webhook(request):
             else:
                 return Response({"status": "error", "message": "Failed to send SMS"}, status=500)
         except Exception as e:
-            return {"error": str(e)}
+            return Response({"error": str(e)}, status=500)
 
 
         # return Response({"status": "success", "message": "SMS task queued"})
