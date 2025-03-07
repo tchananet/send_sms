@@ -68,19 +68,19 @@ def receive_webhook(request):
         "recipient": phone_number,
         "text": message_content
         }
-        logging.error(f"Received Webhook Data: {sms_payload}")
+        # logging.error(f"Received Webhook Data: {sms_payload}")
         
         try:
             response = requests.post(SMS_API_URL, json=sms_payload)
             # return response.json()  # Return API response (useful for logging) 
             # Check if the SMS was sent successfully
             if response.status_code == 200:
-                logging.debug(f"Success to send SMS")
+                logging.error(f"Success to send SMS")
                 return Response({"status": "success", "message": "SMS sent successfully"}, status=200)
                 
 
             else:
-                logging.debug(f"Failed to send SMS")
+                logging.error(f"Failed to send SMS")
                 return Response({"status": "error", "message": "Failed to send SMS"}, status=500)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
