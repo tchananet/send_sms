@@ -16,6 +16,13 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+CELERY_BROKER_URL = "redis://default:AXh_AAIjcDFmN2ZjNWI5MjFlMjY0ZjRmYThiNGVmYzk2ZGIyM2RkOHAxMA@gentle-feline-30847.upstash.io:6379"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+
+# redis-cli --tls -u 
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 

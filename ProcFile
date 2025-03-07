@@ -1,2 +1,2 @@
-web: gunicorn myproject.wsgi
-worker: celery -A myproject worker --loglevel=info
+web: gunicorn whatsapp_sms.wsgi
+worker: celery -A whatsapp_sms worker --loglevel=info
