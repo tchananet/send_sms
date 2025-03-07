@@ -41,10 +41,11 @@ def receive_webhook(request):
         phone_number = data.get("phone", 0)
         if phone_number==0:
             return Response({"status": "failed", "message": "No Phone Number"})
-        # Send SMS asynchronously
+        #g Send SMS asynchronously
         send_sms_task.delay(phone_number, message_content)
 
         return Response({"status": "success", "message": "SMS task queued"})
 
     except Exception as e:
+        print(e)
         return Response({"error": str(e)}, status=500)
