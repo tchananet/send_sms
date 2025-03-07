@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .tasks import send_sms_task
 import requests
+import logging
 
 
 # Title Mapping
@@ -19,6 +20,7 @@ CAR_MODEL_MAPPING = {
 
 @api_view(["POST"])
 def receive_webhook(request):
+    logging.error(f"Received Webhook Data: {request.data}")
     """
     Receives webhook data from Odoo and triggers an async SMS sending task.
     """
