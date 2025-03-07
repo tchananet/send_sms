@@ -1,0 +1,7 @@
+django
+djangorestframework
+gunicorn
+whitenoise
+requests
+celery
+redis
