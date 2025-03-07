@@ -1,6 +1,5 @@
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .tasks import send_sms_task
+from rest_framework.response import Response 
 import requests
 import logging
 import re

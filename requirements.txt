@@ -4,5 +4,4 @@ gunicorn
 whitenoise
 requests
 celery
-redis
-django_celery_results
+redis 
