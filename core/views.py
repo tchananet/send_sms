@@ -1,9 +1,14 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .tasks import send_sms_task
+import requests
+
 
 # Title Mapping
 TITLE_MAPPING = {1: "Monsieur", 2: "Madame"}
+
+SMS_API_URL = "https://api.avlytext.com/v1/sms?api_key=H8krDAYH8deiNpKgSKqFlRjbY3Gx9N09ESfujWfcxrp0Sw6Msftk6XZ0OfSA0xQe67k5"
+
 
 # Car Model Mapping (update this based on your Odoo system)
 CAR_MODEL_MAPPING = {
@@ -41,10 +46,33 @@ def receive_webhook(request):
         phone_number = data.get("phone", 0)
         if phone_number==0:
             return Response({"status": "failed", "message": "No Phone Number"})
-        #g Send SMS asynchronously
-        send_sms_task.delay(phone_number, message_content)
+        # Send SMS asynchronously
+        # send_sms_task.delay(phone_number, message_content)
+        
+        """
+        Sends an SMS asynchronously using an external API.
+        """
+        sms_payload =   {
+        "sender": "AlphaMotors",
+        "recipient": phone_number,
+        "text": message_content
+        }
+        
+        try:
+            response = requests.post(SMS_API_URL, json=sms_payload)
+            # return response.json()  # Return API response (useful for logging)
+        
 
-        return Response({"status": "success", "message": "SMS task queued"})
+            # Check if the SMS was sent successfully
+            if response.status_code == 200:
+                return Response({"status": "success", "message": "SMS sent successfully"})
+            else:
+                return Response({"status": "error", "message": "Failed to send SMS"}, status=500)
+        except Exception as e:
+            return {"error": str(e)}
+
+
+        # return Response({"status": "success", "message": "SMS task queued"})
 
     except Exception as e:
         print(e)

@@ -16,11 +16,17 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-CELERY_BROKER_URL = "redis://default:AXh_AAIjcDFmN2ZjNWI5MjFlMjY0ZjRmYThiNGVmYzk2ZGIyM2RkOHAxMA@gentle-feline-30847.upstash.io:6379"
+# CELERY_BROKER_URL = "redis://default:AXh_AAIjcDFmN2ZjNWI5MjFlMjY0ZjRmYThiNGVmYzk2ZGIyM2RkOHAxMA@gentle-feline-30847.upstash.io:6379"
+CELERY_BROKER_URL = "django-db"
+
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 
 # redis-cli --tls -u 
+CELERY_RESULT_BACKEND = 'django-db'
+
+
+CELERY_CACHE_BACKEND = 'django-cache'
 
 
 # Quick-start development settings - unsuitable for production
@@ -46,6 +52,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     "rest_framework",  # For REST API
+    "django_celery_results",
+
+
+
     "core",
 ]
 
