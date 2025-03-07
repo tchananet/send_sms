@@ -25,10 +25,12 @@ CAR_MODEL_MAPPING = {
 @api_view(["POST"])
 def receive_webhook(request):
     logging.error(f"Received Webhook Data: {request.data}")
-    logging.info(f"Received Webhook Header: {request.headers}")
+    logging.error(f"Received Webhook Header: {request.headers}")
     """
     Receives webhook data from Odoo and triggers an async SMS sending task.
     """
+    return Response({"error": str(123)}, status=500)
+
     try:
         data = request.data  # Parse JSON payload from Odoo
         
@@ -83,4 +85,5 @@ def receive_webhook(request):
 
     except Exception as e:
         print(e)
+        logging.error(e)
         return Response({"error": str(e)}, status=500)
