@@ -51,14 +51,12 @@ def receive_webhook(request):
         Excellente journée à vous, et à bientôt chez Alpha Motors !
         """
 
-        logging.error(f"Content {message_content}")
-
-        return Response({"error": str(123)}, status=500)
-
+        
         # Assume phone number is retrieved elsewhere (e.g., another API call)
         phone_number = data.get("phone", 0)
         if phone_number==0:
-            return Response({"status": "failed", "message": "No Phone Number"})
+
+            return Response({"status": "failed", "message": "No Phone Number"}, status=200)
         # Send SMS asynchronously
         # send_sms_task.delay(phone_number, message_content)
         
@@ -78,7 +76,7 @@ def receive_webhook(request):
 
             # Check if the SMS was sent successfully
             if response.status_code == 200:
-                return Response({"status": "success", "message": "SMS sent successfully"})
+                return Response({"status": "success", "message": "SMS sent successfully"}, status=200)
             else:
                 return Response({"status": "error", "message": "Failed to send SMS"}, status=500)
         except Exception as e:
