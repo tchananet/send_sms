@@ -68,6 +68,7 @@ def receive_webhook(request):
         "recipient": phone_number,
         "text": message_content
         }
+        logging.error(f"Received Webhook Data: {sms_payload}")
         
         try:
             response = requests.post(SMS_API_URL, json=sms_payload)
