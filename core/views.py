@@ -49,11 +49,16 @@ def receive_webhook(request):
 
         Merci encore d’avoir visité notre stand et pour l’intérêt que vous portez au véhicule {car_model}. Comme convenu, vous pouvez consulter notre catalogue complet en ligne via ce lien : https://www.alphamotors-cameroun.com/catalogue.
 
-        Si vous avez des questions ou si vous souhaitez plus de détails, n’hésitez surtout pas à nous écrire par WhatsApp ou à nous appeler au 650 654 797. Nous serons ravis de vous assister.
+        Si vous avez des questions ou si vous souhaitez plus de détails, n’hésitez surtout pas à nous écrire par WhatsApp ou à nous appeler au 692 091 685 / 650 654 797. Nous serons ravis de vous assister.
 
         Excellente journée à vous, et à bientôt chez Alpha Motors !
         """
 
+        SMS_message_content = f"""Bonjour {title} {display_name},
+
+        Merci d’avoir visité notre stand et pour l’intérêt porté au {car_model}. Retrouvez notre catalogue en ligne ici : https://bit.ly/alphmotors. 
+        Pour toute question, contactez-nous au 692 091 685 ou via WhatsApp. À bientôt chez Alpha Motors !
+        """ 
         
         # Assume phone number is retrieved elsewhere (e.g., another API call)
         phone_number = str(data.get("phone", 0)).replace(" ","")
@@ -87,12 +92,12 @@ def receive_webhook(request):
         sms_payload =   {
         "sender": "AlphaMotors",
         "recipient": phone_number,
-        "text": message_content
+        "text": SMS_message_content
         }
 
         whatsapp_payload =   {  
         "recipient": whatsapp_number,
-        "sender_id": "237657467945",
+        "sender_id": "692091685",
         "type": "whatsapp",
         "message": message_content
         }
