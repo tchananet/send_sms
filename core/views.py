@@ -55,7 +55,6 @@ def receive_webhook(request):
         """
 
         SMS_message_content = f"""Bonjour {title} {display_name},
-
         Merci d’avoir visité notre stand et pour l’intérêt porté au {car_model}. Retrouvez notre catalogue en ligne ici : https://bit.ly/alphmotors. 
         Pour toute question, contactez-nous au 692 091 685 ou via WhatsApp. À bientôt chez Alpha Motors !
         """ 
