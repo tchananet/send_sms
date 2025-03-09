@@ -18,12 +18,31 @@ SMS_API_URL = settings.sms_api_url
 WHATSAPP_API_URL = "https://app.techsoft-sms.com/api/v3/sms/send"
 
 
-# Car Model Mapping (update this based on your Odoo system)
+# # Car Model Mapping (update this based on your Odoo system)
+# CAR_MODEL_MAPPING = {
+#     1: "Toyota Corolla",
+#     2: "Nissan Qashqai",
+#     3: "Hyundai Tucson"
+# }
+
+# Dictionnaire des véhicules avec leurs index
 CAR_MODEL_MAPPING = {
-    1: "Toyota Corolla",
-    2: "Nissan Qashqai",
-    3: "Hyundai Tucson"
+    19: "Berline MG7",
+    27: "CHANGAN 4X4 UNI-K",
+    26: "CHANGAN CS55 PLUS",
+    23: "CYBERTANK",
+    43: "Denza D9 Hybrid 4X4 personnalisé",
+    42: "Dongfeng M-hero M50",
+    13: "Geely Cool",
+    18: "Haval H5",
+    52: "Haval H6",
+    9: "Haval M6 Plus",
+    24: "Kit de protection",
+    38: "Pare-buffle",
+    16: "Pick-Up Rich 6",
+    21: "Tank 300 Standard",
 }
+
 
 @api_view(["POST"])
 def receive_webhook(request):
@@ -40,7 +59,7 @@ def receive_webhook(request):
         # Extract required fields with fallbacks
         title = TITLE_MAPPING.get(data.get("title"), "Cher")  # Default to "Cher Client"
         display_name = data.get("display_name", "Client")
-        car_model = CAR_MODEL_MAPPING.get(data.get("x_studio_modele_voiture"), "un de nos véhicules")
+        car_model = CAR_MODEL_MAPPING.get(data.get("x_studio_many2one_field_44a_1iffl5utu"), "un de nos véhicules")
 
         # Format the personalized message
         message_content = f"""Bonjour {title} {display_name},
