@@ -11,7 +11,7 @@ from whatsapp_sms import settings
 
 
 # Title Mapping
-TITLE_MAPPING = {1: "Monsieur", 2: "Madame"}
+TITLE_MAPPING = {1: "Monsieur", 2: "Madame", 3: "Mr.",}
 
 SMS_API_URL = settings.sms_api_url
 
@@ -100,6 +100,7 @@ def receive_webhook(request):
         }
 
         if phone_number=="0" and whatsapp_number=="0" :
+            logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
             return Response({"status": "failed", "message": "No Phone Number"}, status=200)
         # Send SMS asynchronously
         # send_sms_task.delay(phone_number, message_content)
@@ -157,8 +158,12 @@ def send_SMS(payload):
     # return response.json()  # Return API response (useful for logging) 
     # Check if the SMS was sent successfully
     if response.status_code == 200: 
+        logging.info("SENT SMS")
         return True
+        
+
     else: 
+        logging.error(f"SMS FAILED: PAYLOAD = {payload}")
         return False
     
 def send_Whatsapp( payload, headers):
@@ -171,4 +176,5 @@ def send_Whatsapp( payload, headers):
     if response.status_code == 200: 
         return True
     else: 
+        logging.error(f"SMS FAILED: PAYLOAD = {payload}")
         return False
