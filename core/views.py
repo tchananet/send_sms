@@ -116,7 +116,7 @@ def receive_webhook(request):
 
         whatsapp_payload =   {  
         "recipient": whatsapp_number,
-        "sender_id": "692091685",
+        "sender_id": "237692091685",
         "type": "whatsapp",
         "message": message_content
         }
@@ -176,5 +176,5 @@ def send_Whatsapp( payload, headers):
     if response.status_code == 200: 
         return True
     else: 
-        logging.error(f"SMS FAILED: PAYLOAD = {payload}")
+        logging.error(f"WHATSAPP FAILED: PAYLOAD = {payload}")
         return False
