@@ -74,7 +74,7 @@ def receive_webhook(request):
         """
 
         SMS_message_content = f"""Bonjour {title} {display_name},
-        Merci d’avoir visité notre stand et pour l’intérêt porté au {car_model}. Retrouvez notre catalogue en ligne ici : https://bit.ly/alphmotors. 
+        Merci d’avoir visité notre stand et pour l’intérêt porté au {car_model}. Retrouvez notre catalogue en ligne ici : https://shr.pn/alpha-motors. 
         Pour toute question, contactez-nous au 692 091 685 ou via WhatsApp. À bientôt chez Alpha Motors !
         """ 
         
@@ -123,7 +123,8 @@ def receive_webhook(request):
         # logging.error(f"Received Webhook Data: {sms_payload}")
         
         try:
-            send_SMS(sms_payload)
+            if phone_number!="False":
+                send_SMS(sms_payload)
             send_Whatsapp(whatsapp_payload, headers)
         except Exception as e:
             logging.error(e)
