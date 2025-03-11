@@ -124,7 +124,11 @@ def receive_webhook(request):
         
         try:
             if whatsapp_number != "False":
-                send_Whatsapp(whatsapp_payload, headers)                
+                sent_whatsapp = send_Whatsapp(whatsapp_payload, headers)   
+                if sent_whatsapp :
+                    pass
+                else:
+                    send_SMS(sms_payload)
             else:
                 send_SMS(sms_payload)
                 # send_Whatsapp(whatsapp_payload, headers)
@@ -163,9 +167,7 @@ def send_SMS(payload):
     # Check if the SMS was sent successfully
     if response.status_code == 200: 
         logging.info("SENT SMS")
-        return True
-        
-
+        return True 
     else: 
         logging.error(f"SMS FAILED: PAYLOAD = {payload}")
         return False
