@@ -123,9 +123,12 @@ def receive_webhook(request):
         # logging.error(f"Received Webhook Data: {sms_payload}")
         
         try:
-            if phone_number!="False":
+            if whatsapp_number != "False":
+                send_Whatsapp(whatsapp_payload, headers)                
+            else:
                 send_SMS(sms_payload)
-            send_Whatsapp(whatsapp_payload, headers)
+                # send_Whatsapp(whatsapp_payload, headers)
+            # send_Whatsapp(whatsapp_payload, headers)
         except Exception as e:
             logging.error(e)
             return Response({"error": str(e)}, status=500)
