@@ -6,7 +6,7 @@ import re
 from whatsapp_sms import settings
 
 import locale
-locale.setlocale(locale.LC_TIME, 'fr_FR.utf8') 
+locale.setlocale(locale.LC_ALL, 'fr_FR.utf8') 
 
     
 
