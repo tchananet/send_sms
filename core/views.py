@@ -253,6 +253,27 @@ def receive_webhook(request):
 
 
 
+@api_view(["POST", "GET"])
+def index(request):
+    # logging.error(f"Received Webhook Data: {request.data}")
+    # logging.error(f"Received Webhook Header: {request.headers}")
+    """
+    Receives webhook data from Odoo and triggers an async SMS sending task.
+
+    """ 
+
+    try: 
+        
+        return Response({"status": "success", "message": "SMS Sent"}, status=200) 
+
+    except Exception as e:
+        print(e)
+        logging.error(e)
+        return Response({"error": str(e)}, status=500)
+
+
+
+
 def format_cameroon_number(phone):
     """
     Converts a 9-digit phone number starting with '6' into the international format (+237).
