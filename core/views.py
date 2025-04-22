@@ -6,7 +6,7 @@ import re
 from whatsapp_sms import settings
 
 import locale
-locale.setlocale(locale.LC_ALL, 'fr_FR.utf8') 
+# locale.setlocale(locale.LC_ALL, 'fr_FR.utf8') 
 
     
 
@@ -51,6 +51,16 @@ def receive_webhook_recall(request):
 
     """ 
 
+    french_days = {
+        0: "lundi",
+        1: "mardi",
+        2: "mercredi",
+        3: "jeudi",
+        4: "vendredi",
+        5: "samedi",
+        6: "dimanche",
+    }
+
 
     try:
         data = request.data  # Parse JSON payload from Odoo
@@ -58,18 +68,25 @@ def receive_webhook_recall(request):
         # Extract required fields with fallbacks
         title = TITLE_MAPPING.get(data.get("title"), "Cher")  # Default to "Cher Client"
         display_name = data.get("display_name", "Client")
-        activity_date = data.get("x_date_rendez_vous", "")
-
+        activity_date = data.get("x_date_rendez_vous", "") 
         if activity_date: 
-            formatted_date = activity_date.strftime('%A %d %B %Y') 
+            # formatted_date = activity_date.strftime('%A %d %B %Y') 
+            # formatted_activity_date = f"{day_in_french} {formatted_date}"
+
+            weekday = activity_date.weekday()  # Monday is 0 and Sunday is 6
+            day_in_french = french_days.get(weekday, "")
+            formatted_date = activity_date.strftime('%d-%m-%Y')
             formatted_activity_date = f"{day_in_french} {formatted_date}"
+
+
         else:
             formatted_date = ""
+            formatted_activity_date = ""
 
         # Format the personalized message
         message_content = f"""Bonjour M./Mme. {display_name}, 
 
-        C'est le service client de Alpha Motors. Nous avons noté votre absence à votre rendez-vous du {formatted_date}.
+        C'est le service client de Alpha Motors. Nous avons noté votre absence à votre rendez-vous du {formatted_activity_date}.
 
         Nous comprenons que des imprévus peuvent survenir. Si vous souhaitez reprogrammer votre rendez-vous afin de discuter de votre projet automobile, n'hésitez pas à contacter notre service client au 692 091 685 / 650 654 797 pour que nous trouvions une nouvelle date qui vous convienne.
 
