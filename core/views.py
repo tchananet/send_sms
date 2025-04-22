@@ -5,13 +5,16 @@ import logging
 import re
 from whatsapp_sms import settings
 
+import locale
+locale.setlocale(locale.LC_TIME, 'fr_FR.utf8') 
 
+    
 
 # git add . & git commit -m "Debugging" & git push origin main
 
 
 # Title Mapping
-TITLE_MAPPING = {1: "Monsieur", 2: "Madame", 3: "Mr.",}
+TITLE_MAPPING = {1: "Mr.", 2: "Mme.", 3: "Mr.",}
 
 SMS_API_URL = settings.sms_api_url
 
@@ -45,8 +48,9 @@ def receive_webhook_recall(request):
     # logging.error(f"Received Webhook Header: {request.headers}")
     """
     Receives webhook data from Odoo and triggers an async SMS sending task.
-    """
-    
+
+    """ 
+
 
     try:
         data = request.data  # Parse JSON payload from Odoo
@@ -54,24 +58,26 @@ def receive_webhook_recall(request):
         # Extract required fields with fallbacks
         title = TITLE_MAPPING.get(data.get("title"), "Cher")  # Default to "Cher Client"
         display_name = data.get("display_name", "Client")
-        car_model = CAR_MODEL_MAPPING.get(data.get("x_studio_many2one_field_44a_1iffl5utu"), "un de nos véhicules")
+        activity_date = data.get("x_date_rendez_vous", "")
+
+        if activity_date: 
+            formatted_date = activity_date.strftime('%A %d %B %Y') 
+            formatted_activity_date = f"{day_in_french} {formatted_date}"
+        else:
+            formatted_date = ""
 
         # Format the personalized message
-        message_content = f"""Bonjour {title} {display_name},
+        message_content = f"""Bonjour M./Mme. {display_name}, 
 
-        C’est le service client d'Alpha Motors.
+        C'est le service client de Alpha Motors. Nous avons noté votre absence à votre rendez-vous du {formatted_date}.
 
-        Merci encore d’avoir visité notre stand et pour l’intérêt que vous portez au véhicule {car_model}. Comme convenu, vous pouvez consulter notre catalogue complet en ligne via ce lien : https://www.alphamotors-cameroun.com/catalogue.
+        Nous comprenons que des imprévus peuvent survenir. Si vous souhaitez reprogrammer votre rendez-vous afin de discuter de votre projet automobile, n'hésitez pas à contacter notre service client au 692 091 685 / 650 654 797 pour que nous trouvions une nouvelle date qui vous convienne.
 
-        Si vous avez des questions ou si vous souhaitez plus de détails, n’hésitez surtout pas à nous écrire par WhatsApp ou à nous appeler au 692 091 685 / 650 654 797. Nous serons ravis de vous assister.
+        Le service client de Alpha Motors Cameroun reste à votre disposition.
 
-        Excellente journée à vous, et à bientôt chez Alpha Motors !
+        Cordialement,
+        Alpha Motors Cameroun.
         """
-
-        SMS_message_content = f"""Bonjour {title} {display_name},
-        Merci d’avoir visité notre stand et pour l’intérêt porté au {car_model}. Retrouvez notre catalogue en ligne ici : https://shr.pn/alpha-motors. 
-        Pour toute question, contactez-nous au 692 091 685 ou via WhatsApp. À bientôt chez Alpha Motors !
-        """ 
         
         # Assume phone number is retrieved elsewhere (e.g., another API call)
         phone_number = str(data.get("phone", 0)).replace(" ","")
@@ -85,32 +91,16 @@ def receive_webhook_recall(request):
             "Authorization": f"Bearer {settings.techsoft}",
             "Content-Type": "application/json"
         }
-
-        # Data payload
-        data = {
-            "recipient": "237655272036",
-            "sender_id": "237657467945",
-            "type": "whatsapp",
-            "message": "This is a test message"
-        }
-
-        if phone_number=="0" and whatsapp_number=="0" :
-            logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
-            return Response({"status": "failed", "message": "No Phone Number"}, status=200)
-        # Send SMS asynchronously
-        # send_sms_task.delay(phone_number, message_content)
-        
-        """
-        Sends an SMS asynchronously using an external API.
-        """
-        sms_payload =   {
-        "sender": "AlphaMotors",
-        "recipient": phone_number,
-        "text": SMS_message_content
-        }
+ 
+        if whatsapp_number=="0":
+            if phone_number=="0": 
+                logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
+                return Response({"status": "failed", "message": "No Phone Number"}, status=200) 
+            else :
+                whatsapp_number = phone_number 
 
         whatsapp_payload =   {  
-        "recipient": whatsapp_number,
+        "recipient": whatsapp_number,   
         "sender_id": "237692091685",
         "type": "whatsapp",
         "message": message_content,
@@ -128,22 +118,20 @@ def receive_webhook_recall(request):
         try:
             if whatsapp_number != "False":
                 sent_whatsapp = send_Whatsapp(whatsapp_payload, headers)   
-                if sent_whatsapp :
+                if sent_whatsapp:
                     pass
                 else:
                     send_SMS(sms_payload)
             else:
-                send_SMS(sms_payload)
+                # send_SMS(sms_payload)
+                pass
                 # send_Whatsapp(whatsapp_payload, headers)
             # send_Whatsapp(whatsapp_payload, headers)
         except Exception as e:
             logging.error(e)
             return Response({"error": str(e)}, status=500)
         
-        return Response({"status": "success", "message": "SMS Sent"}, status=200)
-
-
-        # return Response({"status": "success", "message": "SMS task queued"})
+        return Response({"status": "success", "message": "SMS Sent"}, status=200) 
 
     except Exception as e:
         print(e)
@@ -168,7 +156,7 @@ def receive_webhook(request):
         car_model = CAR_MODEL_MAPPING.get(data.get("x_studio_many2one_field_44a_1iffl5utu"), "un de nos véhicules")
 
         # Format the personalized message
-        message_content = f"""Bonjour {title} {display_name},
+        message_content = f"""Bonjour M./Mme. {display_name},
 
         C’est le service client d'Alpha Motors.
 
