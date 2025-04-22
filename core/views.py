@@ -38,7 +38,7 @@ CAR_MODEL_MAPPING = {
     52: "Haval H6",
     9: "Haval M6 Plus", 
     16: "Pick-Up Rich 6",
-    21: "Tank 300",
+    21: "Tank 300", 
 }
 
 
