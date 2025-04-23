@@ -4,7 +4,7 @@ from .views import receive_webhook_recall
 from .views import index
 
 urlpatterns = [
-    path("/", index, name="home"),
+    path("", index, name="home"),
     path("webhook/", receive_webhook, name="webhook"),
     path("send_whatsapp_recall/", receive_webhook_recall, name="webhook_recall"),
 ]
