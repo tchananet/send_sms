@@ -4,7 +4,7 @@ import requests
 import logging
 import re
 from whatsapp_sms import settings
-
+from datetime import datetime
 import locale
 # locale.setlocale(locale.LC_ALL, 'fr_FR.utf8') 
 
@@ -68,10 +68,11 @@ def receive_webhook_recall(request):
         # Extract required fields with fallbacks
         title = TITLE_MAPPING.get(data.get("title"), "Cher")  # Default to "Cher Client"
         display_name = data.get("display_name", "Client")
-        activity_date = data.get("x_date_rendez_vous", "") 
-        if activity_date: 
+        activity_date_str = data.get("x_date_rendez_vous", "") 
+        if activity_date_str: 
             # formatted_date = activity_date.strftime('%A %d %B %Y') 
             # formatted_activity_date = f"{day_in_french} {formatted_date}"
+            activity_date = datetime.strptime(activity_date_str, "%Y-%m-%d").date()
 
             weekday = activity_date.weekday()  # Monday is 0 and Sunday is 6
             day_in_french = french_days.get(weekday, "")
