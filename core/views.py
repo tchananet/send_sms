@@ -111,13 +111,17 @@ def receive_webhook_recall(request):
             "Authorization": f"Bearer {settings.techsoft}",
             "Content-Type": "application/json"
         }
- 
-        if whatsapp_number=="0":
+        if whatsapp_number=="0" or whatsapp_number=="False": 
+            print("whatsapp_number")
             if phone_number=="0": 
                 logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
-                return Response({"status": "failed", "message": "No Phone Number"}, status=200) 
+                return Response({"status": "failed", "message": "No Phone Number"}, status=400) 
             else :
+                print("AASDASD")
                 whatsapp_number = phone_number 
+        else:
+            print(whatsapp_number)
+
 
         whatsapp_payload =   {  
         "recipient": whatsapp_number,   
@@ -139,20 +143,20 @@ def receive_webhook_recall(request):
             if whatsapp_number != "False":
                 sent_whatsapp = send_Whatsapp(whatsapp_payload, headers)   
                 if sent_whatsapp:
-                    pass
+                    return Response({"status": "success", "message": "SMS Sent"}, status=200) 
                 else:
-                    send_SMS(sms_payload)
+                    return Response({"status": "failed", "message": "Server could not send message"}, status=400)  
             else:
                 # send_SMS(sms_payload)
                 pass
+                return Response({"status": "success", "message": phone_number}, status=200) 
                 # send_Whatsapp(whatsapp_payload, headers)
             # send_Whatsapp(whatsapp_payload, headers)
         except Exception as e:
             logging.error(e)
             return Response({"error": str(e)}, status=500)
         
-        return Response({"status": "success", "message": "SMS Sent"}, status=200) 
-
+        
     except Exception as e:
         print(e)
         logging.error(e)
