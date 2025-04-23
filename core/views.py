@@ -112,12 +112,11 @@ def receive_webhook_recall(request):
             "Content-Type": "application/json"
         }
         if whatsapp_number=="0" or whatsapp_number=="False": 
-            print("whatsapp_number")
             if phone_number=="0": 
                 logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
                 return Response({"status": "failed", "message": "No Phone Number"}, status=400) 
             else :
-                print("AASDASD")
+                print("whatsapp_number = phone_number ")
                 whatsapp_number = phone_number 
         else:
             print(whatsapp_number)
@@ -125,14 +124,14 @@ def receive_webhook_recall(request):
 
         whatsapp_payload =   {  
         "recipient": whatsapp_number,   
-        "sender_id": "23780013501",
+        "sender_id": "237692091685",
         "type": "whatsapp",
         "message": message_content,
         }
 
         whatsapp_payload_w_document =   {  
         "recipient": whatsapp_number,
-        "sender_id": "23780013501",
+        "sender_id": "237692091685",
         "type": "whatsapp",
         "message": "FICHE TECHNIQUE ALPHA MOTORS",
         "media_url":"https://meek-nasturtium-1b6cb0.netlify.app/fichetechnique.pdf"
@@ -316,7 +315,7 @@ def whatsapp_reminder_tomorrow(request):
 
         payload = {
             "recipient": whatsapp_number,
-            "sender_id": "23780013501",
+            "sender_id": "237692091685",
             "type": "whatsapp",
             "message": message,
         }
