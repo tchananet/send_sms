@@ -6,6 +6,8 @@ import re
 from whatsapp_sms import settings
 from datetime import datetime
 import locale
+from django.http import HttpResponse
+
 # locale.setlocale(locale.LC_ALL, 'fr_FR.utf8') 
 
     
@@ -271,23 +273,12 @@ def receive_webhook(request):
 
 
 
-@api_view(["POST", "GET"])
+@api_view(["GET", "POST"])
 def index(request):
-    # logging.error(f"Received Webhook Data: {request.data}")
-    # logging.error(f"Received Webhook Header: {request.headers}")
     """
-    Receives webhook data from Odoo and triggers an async SMS sending task.
-
-    """ 
-
-    try: 
-        
-        return Response({"status": "success", "message": "SMS Sent"}, status=200) 
-
-    except Exception as e:
-        print(e)
-        logging.error(e)
-        return Response({"error": str(e)}, status=500)
+    Returns a completely blank HTML page with 200 OK.
+    """
+    return HttpResponse("", content_type="text/html", status=200)
 
 
 
