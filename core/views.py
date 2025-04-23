@@ -125,14 +125,14 @@ def receive_webhook_recall(request):
 
         whatsapp_payload =   {  
         "recipient": whatsapp_number,   
-        "sender_id": "237692091685",
+        "sender_id": "23780013501",
         "type": "whatsapp",
         "message": message_content,
         }
 
         whatsapp_payload_w_document =   {  
         "recipient": whatsapp_number,
-        "sender_id": "237692091685",
+        "sender_id": "23780013501",
         "type": "whatsapp",
         "message": "FICHE TECHNIQUE ALPHA MOTORS",
         "media_url":"https://meek-nasturtium-1b6cb0.netlify.app/fichetechnique.pdf"
@@ -284,6 +284,56 @@ def index(request):
     """
     return HttpResponse("", content_type="text/html", status=200)
 
+@api_view(["POST"])
+def whatsapp_reminder_tomorrow(request): 
+
+    try:
+        data = request.data
+
+        # Extract name and fallback to "Client"
+        display_name = data.get("display_name", "Client")
+ 
+        # Format numbers
+        phone = format_cameroon_number(str(data.get("phone", "")).replace(" ", ""))
+        whatsapp_number = format_cameroon_number(str(data.get("mobile", "")).replace(" ", "")) or phone
+
+        if not whatsapp_number or whatsapp_number=="False" or whatsapp_number=="false":
+            if phone and phone != "False":
+                whatsapp_number = phone
+                print(phone)
+            else:
+                return Response({"status": "failed", "message": f" {whatsapp_number} is not valid phone number"}, status=400)
+
+        # New message content
+        message = f"""
+        Bonjour Monsieur/Madame {display_name},
+
+    C’est le service client d'Alpha Motors.
+    Nous vous contactons pour vous rappeler que votre rendez-vous pour l’essai du véhicule est prévu demain.
+    Merci de bien vouloir nous confirmer votre présence afin que nous puissions organiser au mieux votre accueil.
+
+    À bientôt chez Alpha Motors !"""
+
+        payload = {
+            "recipient": whatsapp_number,
+            "sender_id": "23780013501",
+            "type": "whatsapp",
+            "message": message,
+        }
+
+        headers = {
+            "Authorization": f"Bearer {settings.techsoft}",
+            "Content-Type": "application/json",
+        }
+
+        sent = send_Whatsapp(payload, headers)
+        if sent:
+            return Response({"status": "success", "message": "Message Sent"}, status=200)
+        return Response({"status": "failed", "message": "Message not sent"}, status=400)
+
+    except Exception as e:
+        logging.error(e)
+        return Response({"error": str(e)}, status=500)
 
 
 
