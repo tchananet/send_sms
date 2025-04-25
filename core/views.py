@@ -221,6 +221,17 @@ def receive_webhook(request):
         if phone_number=="0" and whatsapp_number=="0" :
             logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
             return Response({"status": "failed", "message": "No Phone Number"}, status=200)
+
+        if whatsapp_number=="0" or whatsapp_number=="False": 
+            if phone_number=="0": 
+                logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
+                return Response({"status": "failed", "message": "No Phone Number"}, status=400) 
+            else :
+                print("whatsapp_number = phone_number ")
+                whatsapp_number = phone_number 
+        else:
+            print(whatsapp_number)
+
         # Send SMS asynchronously
         # send_sms_task.delay(phone_number, message_content)
         
@@ -370,6 +381,7 @@ def send_Whatsapp( payload, headers, whatsapp_payload_w_document={}):
     if response.status_code == 200: 
         next_response = requests.post(WHATSAPP_API_URL, headers=headers, json=whatsapp_payload_w_document) 
         if next_response.status_code == 200:  
+            logging.info(f"WHATSAPP SUCCESS: PAYLOAD = {whatsapp_payload_w_document}")
             return True
         else:
             logging.error(f"NEXT WHATSAPP FAILED: PAYLOAD = {whatsapp_payload_w_document}")
