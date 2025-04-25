@@ -287,7 +287,6 @@ def receive_webhook(request):
 
 
 
-@api_view(["GET", "POST"])
 def index(request):
     """
     Returns a completely blank HTML page with 200 OK.
