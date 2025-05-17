@@ -208,15 +208,7 @@ def receive_webhook(request):
         headers = {
             "Authorization": f"Bearer {settings.techsoft}",
             "Content-Type": "application/json"
-        }
-
-        # Data payload
-        data = {
-            "recipient": "237655272036",
-            "sender_id": "237657467945",
-            "type": "whatsapp",
-            "message": "This is a test message"
-        }
+        } 
 
         if phone_number=="0" and whatsapp_number=="0" :
             logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
@@ -246,7 +238,8 @@ def receive_webhook(request):
 
         whatsapp_payload =   {  
         "recipient": whatsapp_number,
-        "sender_id": "237692091685",
+        # "sender_id": "237692091685",
+        "sender_id": "237650654797",
         "type": "whatsapp",
         "message": message_content
         }
@@ -254,7 +247,7 @@ def receive_webhook(request):
 
         whatsapp_payload_w_document =   {  
         "recipient": whatsapp_number,
-        "sender_id": "237692091685",
+        "sender_id": "237650654797",
         "type": "whatsapp",
         "message": "FICHE TECHNIQUE ALPHA MOTORS",
         "media_url":"https://meek-nasturtium-1b6cb0.netlify.app/fichetechnique.pdf"
