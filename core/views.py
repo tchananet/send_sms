@@ -95,14 +95,14 @@ def receive_webhook_recall(request):
         # Format the personalized message
         message_content = f"""Bonjour M./Mme. {display_name}, 
 
-        C'est le service client de Alpha Motors. Nous avons noté votre absence à votre rendez-vous du {formatted_activity_date}.
+C'est le service client de Alpha Motors. Nous avons noté votre absence à votre rendez-vous du {formatted_activity_date}.
 
-        Nous comprenons que des imprévus peuvent survenir. Si vous souhaitez reprogrammer votre rendez-vous afin de discuter de votre projet automobile, n'hésitez pas à contacter notre service client au 692 091 685 / 650 654 797 pour que nous trouvions une nouvelle date qui vous convienne.
+Nous comprenons que des imprévus peuvent survenir. Si vous souhaitez reprogrammer votre rendez-vous afin de discuter de votre projet automobile, n'hésitez pas à contacter notre service client au 692 091 685 / 650 654 797 pour que nous trouvions une nouvelle date qui vous convienne.
 
-        Le service client de Alpha Motors Cameroun reste à votre disposition.
+Le service client de Alpha Motors Cameroun reste à votre disposition.
 
-        Cordialement,
-        Alpha Motors Cameroun.
+Cordialement,
+Alpha Motors Cameroun.
         """
         
         # Assume phone number is retrieved elsewhere (e.g., another API call)
@@ -184,13 +184,13 @@ def receive_webhook(request):
         # Format the personalized message
         message_content = f"""Bonjour M./Mme. {display_name},
 
-        C’est le service client d'Alpha Motors.
+C’est le service client d'Alpha Motors.
 
-        Merci encore d’avoir visité notre stand et pour l’intérêt que vous portez au véhicule {car_model}. Comme convenu, vous pouvez consulter notre catalogue complet.
+Merci encore d’avoir visité notre stand et pour l’intérêt que vous portez au véhicule {car_model}. Comme convenu, vous pouvez consulter notre catalogue complet.
 
-        Si vous avez des questions ou si vous souhaitez plus de détails, n’hésitez surtout pas à nous écrire par WhatsApp ou à nous appeler au 692 091 685 / 650 654 797. Nous serons ravis de vous assister.
+Si vous avez des questions ou si vous souhaitez plus de détails, n’hésitez surtout pas à nous écrire par WhatsApp ou à nous appeler au 692 091 685 / 650 654 797. Nous serons ravis de vous assister.
 
-        Excellente journée à vous, et à bientôt chez Alpha Motors !
+Excellente journée à vous, et à bientôt chez Alpha Motors !
         """
 
         SMS_message_content = f"""Bonjour {title} {display_name},
@@ -307,13 +307,14 @@ def whatsapp_reminder_tomorrow(request):
 
         # New message content
         message = f"""
-        Bonjour Monsieur/Madame {display_name},
+Bonjour Monsieur/Madame {display_name},
 
-    C’est le service client d'Alpha Motors.
-    Nous vous contactons pour vous rappeler que votre rendez-vous pour l’essai du véhicule est prévu demain.
-    Merci de bien vouloir nous confirmer votre présence afin que nous puissions organiser au mieux votre accueil.
+C’est le service client d'Alpha Motors.
+Nous vous contactons pour vous rappeler que votre rendez-vous pour l’essai du véhicule est prévu demain.
+Merci de bien vouloir nous confirmer votre présence afin que nous puissions organiser au mieux votre accueil.
 
-    À bientôt chez Alpha Motors !"""
+À bientôt chez Alpha Motors !
+    """
 
         payload = {
             "recipient": whatsapp_number,
@@ -501,16 +502,15 @@ def send_whatsapp_ne_repond_pas(request):
 
         # Format the personalized message
         message_content = f"""
-        Bonjour M./Mme. {display_name},
+Bonjour M./Mme. {display_name},
 
+J'espère que vous allez bien.
 
-        J'espère que vous allez bien.
+J'ai essayé de vous joindre concernant votre intérêt pour un véhicule Alpha Motors. Quand seriez-vous disponible pour un bref échange, ou préférez-vous que nous continuions par message ?
 
-        J'ai essayé de vous joindre concernant votre intérêt pour un véhicule Alpha Motors. Quand seriez-vous disponible pour un bref échange, ou préférez-vous que nous continuions par message ?
-
-        À bientôt,
-        Service Client
-        Alpha Motors!
+À bientôt,
+Service Client
+Alpha Motors!
         """
         
         # Assume phone number is retrieved elsewhere (e.g., another API call)
