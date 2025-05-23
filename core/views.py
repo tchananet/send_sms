@@ -481,7 +481,7 @@ def send_catalogue(request):
 
 
 @api_view(["POST"])
-def send_whatsapp_meeting_recall(request):
+def send_whatsapp_ne_repond_pas(request):
     # logging.error(f"Received Webhook Data: {request.data}")
     # logging.error(f"Received Webhook Header: {request.headers}")
     """
