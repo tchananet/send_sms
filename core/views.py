@@ -43,6 +43,12 @@ CAR_MODEL_MAPPING = {
     21: "Tank 300", 
 }
 
+# Headers
+headers = {
+    "Authorization": f"Bearer {settings.techsoft}",
+    "Content-Type": "application/json"
+} 
+
 
 @api_view(["POST"])
 def receive_webhook_recall(request):
@@ -201,11 +207,7 @@ def receive_webhook(request):
         if "dm" in whatsapp_number:
             whatsapp_number=phone_number
 
-        # Headers
-        headers = {
-            "Authorization": f"Bearer {settings.techsoft}",
-            "Content-Type": "application/json"
-        } 
+        
 
         if phone_number=="0" and whatsapp_number=="0" :
             logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
