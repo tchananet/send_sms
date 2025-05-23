@@ -400,15 +400,15 @@ def send_catalogue(request):
 
         # Format the personalized message
         message_content = f"""
-        Bonjour M./Mme. {display_name},
+Bonjour M./Mme. {display_name},
 
-        Comme convenu, voici les fiches techniques des véhicules !
+Comme convenu, voici les fiches techniques des véhicules !
 
-        N'hésitez surtout pas si vous avez la moindre question après les avoir consultées.
+N'hésitez surtout pas si vous avez la moindre question après les avoir consultées.
 
-        À très vite,
-        Service Client
-        Alpha Motors!
+À très vite,
+Service Client
+Alpha Motors!
         """
         
         # Assume phone number is retrieved elsewhere (e.g., another API call)
