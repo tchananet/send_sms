@@ -106,11 +106,7 @@ def receive_webhook_recall(request):
         whatsapp_number = str(data.get("mobile", 0)).replace(" ","")
         whatsapp_number = format_cameroon_number(whatsapp_number)
 
-        # Headers
-        headers = {
-            "Authorization": f"Bearer {settings.techsoft}",
-            "Content-Type": "application/json"
-        }
+        
         if whatsapp_number=="0" or whatsapp_number=="False": 
             if phone_number=="0": 
                 logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
@@ -363,7 +359,7 @@ def send_SMS(payload):
         logging.error(f"SMS FAILED: PAYLOAD = {payload}")
         return False
     
-def send_Whatsapp( payload, headers, whatsapp_payload_w_document={}):
+def send_Whatsapp( payload, headers, whatsapp_payload_w_document=None):
     """
     Converts a 9-digit phone number starting with '6' into the international format (+237).
     """
@@ -371,13 +367,14 @@ def send_Whatsapp( payload, headers, whatsapp_payload_w_document={}):
     response = requests.post(WHATSAPP_API_URL, headers=headers, json=payload) 
 
     if response.status_code == 200: 
-        next_response = requests.post(WHATSAPP_API_URL, headers=headers, json=whatsapp_payload_w_document) 
-        if next_response.status_code == 200:  
-            logging.info(f"WHATSAPP SUCCESS: PAYLOAD = {whatsapp_payload_w_document}")
+        if whatsapp_payload_w_document:
+            next_response = requests.post(WHATSAPP_API_URL, headers=headers, json=whatsapp_payload_w_document) 
+            if next_response.status_code == 200:  
+                logging.info(f"WHATSAPP SUCCESS: PAYLOAD = {whatsapp_payload_w_document}")
+                return True
+            else:
+                logging.error(f"NEXT WHATSAPP FAILED: PAYLOAD = {whatsapp_payload_w_document}")
             return True
-        else:
-            logging.error(f"NEXT WHATSAPP FAILED: PAYLOAD = {whatsapp_payload_w_document}")
-        return True
     else: 
         logging.error(f"WHATSAPP FAILED: PAYLOAD = {payload}")
         return False
@@ -404,8 +401,6 @@ def send_catalogue(request):
         # Format the personalized message
         message_content = f"""
         Bonjour M./Mme. {display_name},
-
-        Bonjour [Nom],
 
         Comme convenu, voici les fiches techniques des véhicules !
 
@@ -469,6 +464,94 @@ def send_catalogue(request):
                 send_SMS(sms_payload)
                 # send_Whatsapp(whatsapp_payload, headers)
             # send_Whatsapp(whatsapp_payload, headers)
+        except Exception as e:
+            logging.error(e)
+            return Response({"error": str(e)}, status=500)
+        
+        return Response({"status": "success", "message": "SMS Sent"}, status=200)
+
+
+        # return Response({"status": "success", "message": "SMS task queued"})
+
+    except Exception as e:
+        print(e)
+        logging.error(e)
+        return Response({"error": str(e)}, status=500)
+
+
+
+@api_view(["POST"])
+def send_whatsapp_meeting_recall(request):
+    # logging.error(f"Received Webhook Data: {request.data}")
+    # logging.error(f"Received Webhook Header: {request.headers}")
+    """
+    Receives webhook data from Odoo and triggers an async SMS sending task.
+    """
+    
+
+    try:
+        data = request.data  # Parse JSON payload from Odoo
+        
+        # Extract required fields with fallbacks
+        title = TITLE_MAPPING.get(data.get("title"), "Cher")  # Default to "Cher Client"
+        display_name = data.get("display_name", "Client")
+
+        # Format the personalized message
+        message_content = f"""
+        Bonjour M./Mme. {display_name},
+
+
+        J'espère que vous allez bien.
+
+        J'ai essayé de vous joindre concernant votre intérêt pour un véhicule Alpha Motors. Quand seriez-vous disponible pour un bref échange, ou préférez-vous que nous continuions par message ?
+
+        À bientôt,
+        Service Client
+        Alpha Motors!
+        """
+        
+        # Assume phone number is retrieved elsewhere (e.g., another API call)
+        phone_number = str(data.get("phone", 0)).replace(" ","")
+        phone_number = format_cameroon_number(phone_number)
+
+        whatsapp_number = str(data.get("mobile", 0)).replace(" ","")
+        whatsapp_number = format_cameroon_number(whatsapp_number)
+        if "dm" in whatsapp_number:
+            whatsapp_number=phone_number
+
+        # Headers
+        headers = {
+            "Authorization": f"Bearer {settings.techsoft}",
+            "Content-Type": "application/json"
+        }  
+
+        if whatsapp_number=="0" or whatsapp_number=="False": 
+            if phone_number=="0": 
+                logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
+                return Response({"status": "failed", "message": "No Phone Number"}, status=400) 
+            else :
+                print("whatsapp_number = phone_number ")
+                whatsapp_number = phone_number 
+        else:
+            print(whatsapp_number) 
+
+        whatsapp_payload =   {  
+        "recipient": whatsapp_number,
+        # "sender_id": "237692091685",
+        "sender_id": "237650654797",
+        "type": "whatsapp",
+        "message": message_content
+        } 
+        
+        try:
+            if whatsapp_number != "False":
+                sent_whatsapp = send_Whatsapp(whatsapp_payload, headers)   
+                if sent_whatsapp :
+                    pass
+                else:
+                    pass
+            else:
+                pass
         except Exception as e:
             logging.error(e)
             return Response({"error": str(e)}, status=500)
