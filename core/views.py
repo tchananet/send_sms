@@ -381,3 +381,104 @@ def send_Whatsapp( payload, headers, whatsapp_payload_w_document={}):
     else: 
         logging.error(f"WHATSAPP FAILED: PAYLOAD = {payload}")
         return False
+
+
+
+
+@api_view(["POST"])
+def send_catalogue(request):
+    # logging.error(f"Received Webhook Data: {request.data}")
+    # logging.error(f"Received Webhook Header: {request.headers}")
+    """
+    Receives webhook data from Odoo and triggers an async SMS sending task.
+    """
+    
+
+    try:
+        data = request.data  # Parse JSON payload from Odoo
+        
+        # Extract required fields with fallbacks
+        title = TITLE_MAPPING.get(data.get("title"), "Cher")  # Default to "Cher Client"
+        display_name = data.get("display_name", "Client")
+
+        # Format the personalized message
+        message_content = f"""
+        Bonjour M./Mme. {display_name},
+
+        Bonjour [Nom],
+
+        Comme convenu, voici les fiches techniques des véhicules !
+
+        N'hésitez surtout pas si vous avez la moindre question après les avoir consultées.
+
+        À très vite,
+        Service Client
+        Alpha Motors!
+        """
+        
+        # Assume phone number is retrieved elsewhere (e.g., another API call)
+        phone_number = str(data.get("phone", 0)).replace(" ","")
+        phone_number = format_cameroon_number(phone_number)
+
+        whatsapp_number = str(data.get("mobile", 0)).replace(" ","")
+        whatsapp_number = format_cameroon_number(whatsapp_number)
+        if "dm" in whatsapp_number:
+            whatsapp_number=phone_number
+
+        # Headers
+        headers = {
+            "Authorization": f"Bearer {settings.techsoft}",
+            "Content-Type": "application/json"
+        }  
+
+        if whatsapp_number=="0" or whatsapp_number=="False": 
+            if phone_number=="0": 
+                logging.error(f"{phone_number} whatsapp is {whatsapp_number}")
+                return Response({"status": "failed", "message": "No Phone Number"}, status=400) 
+            else :
+                print("whatsapp_number = phone_number ")
+                whatsapp_number = phone_number 
+        else:
+            print(whatsapp_number) 
+
+        whatsapp_payload =   {  
+        "recipient": whatsapp_number,
+        # "sender_id": "237692091685",
+        "sender_id": "237650654797",
+        "type": "whatsapp",
+        "message": message_content
+        }
+        # logging.error(f"Received Webhook Data: {sms_payload}")
+
+        whatsapp_payload_w_document =   {  
+        "recipient": whatsapp_number,
+        "sender_id": "237650654797",
+        "type": "whatsapp",
+        "message": "FICHE TECHNIQUE ALPHA MOTORS",
+        "media_url":"https://meek-nasturtium-1b6cb0.netlify.app/fichetechnique.pdf"
+        }
+        
+        try:
+            if whatsapp_number != "False":
+                sent_whatsapp = send_Whatsapp(whatsapp_payload, headers, whatsapp_payload_w_document)   
+                if sent_whatsapp :
+                    pass
+                else:
+                    send_SMS(sms_payload)
+            else:
+                send_SMS(sms_payload)
+                # send_Whatsapp(whatsapp_payload, headers)
+            # send_Whatsapp(whatsapp_payload, headers)
+        except Exception as e:
+            logging.error(e)
+            return Response({"error": str(e)}, status=500)
+        
+        return Response({"status": "success", "message": "SMS Sent"}, status=200)
+
+
+        # return Response({"status": "success", "message": "SMS task queued"})
+
+    except Exception as e:
+        print(e)
+        logging.error(e)
+        return Response({"error": str(e)}, status=500)
